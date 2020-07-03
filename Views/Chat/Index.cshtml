@@ -1,0 +1,129 @@
+@{
+    ViewData["Title"] = "Index";
+    Layout = "/Views/Shared/_Layout.cshtml"; 
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.3/signalr.min.js"></script>
+<link href="/css/chat.css" rel="stylesheet">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Formula 1 chat</title>
+</head>
+@{
+    var userName = @ViewBag.UserName;
+}
+<body>
+     
+
+
+
+    <div class="chat">
+         
+        <div id="chatroom"  id="chat" style="height: 90%;">
+            <div id="dummy-div">
+                
+            </div>
+        </div>
+        <div id="header"></div><br />
+         
+    </div>
+    <br>
+
+     
+        <div class="chat-message-input" id="inputForm">
+            <input type="text" autocomplete="off" class="form-control" id="message" /> 
+            <input type="button" id="sendBtn" class="btn btn-outline-success" value="Отправить" />
+            
+            @* <label for="file-upload" class="custom-file-upload">
+                <i class="fa fa-paperclip"></i>  
+            </label>
+            <input name="imageFile" id="fileinput" type="file"/> *@
+        </div>
+     
+
+    <script>
+        function scrollToBottom(){
+            var block = $("#chat");
+            block.scrollTop = block.scrollHeight;
+        }
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatter")
+            .build();
+         
+        let userName = '';
+
+        // получение сообщения от сервера
+        hubConnection.on('Send', function (message, imageFile, userName) {
+  
+            // создаем элемент <b> для имени пользователя
+            let userNameElem = document.createElement("b");
+            $(userNameElem).css("color", "white");  
+            userNameElem.appendChild(document.createTextNode(userName + ': '));
+            
+  
+            // создает элемент <p> для сообщения пользователя
+            let elem = document.createElement("p");
+            elem.appendChild(userNameElem);
+            $(elem).append('<div class="chat-message">' + message + '</div>'); 
+             
+  
+            var firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").appendChild(elem, firstElem);
+            $(".chat").scrollTop($(".chat").get(0).scrollHeight);
+            playSound('/notification.mp3');
+  
+        });
+        /*Notify*/
+         hubConnection.on('Notify', function (message) {
+             
+            // добавляет элемент для диагностического сообщения
+            let notifyElem = document.createElement("b");
+            notifyElem.appendChild(document.createTextNode(message));
+            let elem = document.createElement("p");
+            $(elem).css("background-color", "white");
+            elem.appendChild(notifyElem);
+            var firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").appendChild(elem, firstElem);
+        });
+         
+        // отправка сообщения на сервер
+        document.getElementById("sendBtn").addEventListener("click", function (e) {
+            
+            let message = document.getElementById("message").value;
+            if(message.length == 0) return;
+            if (message.trim() == '') return;
+            hubConnection.invoke("Send", message, imageFile, '@userName');
+            $("#message").val('');
+            scrollToBottom();
+        });
+        $("#message").keyup(function(event){
+            if(event.keyCode == 13){
+                $("#sendBtn").click();
+                $(this).val('');
+            }
+            
+        });
+ 
+        hubConnection.start();
+
+        let imageFile = '';
+
+        var sound = new Audio();
+        function playSound(url){
+            sound.pause();
+            sound.currentTime = 0;
+            sound.src = url;
+            sound.play();
+        }
+        function soundClick() {
+            var audio = new Audio(); // Создаём новый элемент Audio
+            audio.src = '/sounds/notification.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true; // Автоматически запускаем
+        }
+        
+     
+         
+    </script>
+</body>
+</html>

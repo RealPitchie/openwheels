@@ -1,0 +1,306 @@
+@model IndexViewModel 
+@{ 
+    Layout = "/Views/Shared/_Layout.cshtml"; 
+}
+<script type="text/javascript" src="/js/FeedEk.js"></script>
+@addTagHelper *, yapf1
+<head>
+    <title>Ф1 говорильня</title>
+    <meta name="description" content="Новости, общение, флуд о Формуле-1">
+</head>
+<style>
+    
+    .exmp3 img{
+        height: auto;
+        width: auto;
+        object-fit: cover;
+        
+    }
+    
+    .con {
+        margin-right: 20px;
+        display: inline-block;
+    }
+    
+    .pageLinks {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+    
+    .readMore {
+        cursor: pointer;
+        opacity: .5;
+        font-weight: 700;
+        text-align: right;
+    }
+    
+    .readMore:hover {
+        transition: ease-in .2s;
+        opacity: 1;
+    }
+</style>
+
+<body onload="setFocus()">
+    <div  id="main"></div>
+    <div class="container" style="margin-bottom: 20px;">
+        <div class="row">
+
+            <div class="leftcolumn">
+
+                @if(Model.Posts.Count() != 0) 
+                { 
+                    @foreach (var news in Model.Posts) 
+                    {
+                        <div class="card">
+                            <h2 onclick="location.href='/Home/PostView/@news.Id';" 
+                                style="cursor: pointer;" class="link link--kukuri" data-letters="@news.Title">
+                                
+                                 @news.Title 
+                            </h2>
+                            <div style="display: inline;">
+                                <h5 style="width: 80%"><em>@news.Subtitle</em> </h5>
+                                <span style="float: right; font-size: smaller;">
+                                        <span>@news.Posted.ToShortTimeString() , </span> @news.Posted.Date.ToString("d/MM/yyyy") г.</span>
+                            </div>
+                            <hr>
+                            <div class="exmp3" style="height: 100%;" >
+                                @if(news.VideoLink == null) 
+                                {
+                                    <img src="@news.ImageFile">
+                                }else 
+                                {
+                                <iframe class="embeddedVideo" style="margin: auto; display: none; height: 100%" src="@news.VideoLink" 
+                                    frameborder="0" allowfullscreen></iframe> 
+                                }
+                            </div>
+                            @{ 
+                                if(news.Text != null) 
+                                    { 
+                                        int i = 0; 
+                                        foreach (var str in news.Text.Split('\n')) 
+                                            { if(i == 6) break;
+                                                <p>@str</p>
+                                                i++; 
+                                            } 
+                                        if(news.Text.Split('\n').Count() > 3) 
+                                            {
+                                                <h5 onclick="location.href='/Home/PostView/@news.Id';" class="readMore">читать дальше...</h5>
+
+
+                                            }
+                                        <div class="commentsCounter">
+                                            
+                                        </div>
+                                        <div class="readMore" style="display: inline-block; opacity: .5">
+                                            <i class="fa fa-eye" title="Раз просмотрено"></i> @news.Rating
+                                        </div>
+                                    } 
+                            }
+
+
+                            <input type="hidden" asp-for="@news.Rating" />
+                        </div>
+                    } 
+                }
+                    
+                     
+                        <div class="con">
+                            @if (Model.PageViewModel.HasPreviousPage) {
+                            <a asp-action="Index" asp-route-page="@(Model.PageViewModel.PageNumber - 1)" class="btn btn-outline-dark">
+                                <i class="glyphicon glyphicon-chevron-left"></i> Назад
+                            </a>
+                            }
+                        </div>
+                        <div  class="con">
+                            <page-link page-model="Model.PageViewModel" page-action="Index"/>
+                        </div>
+                        <div class="con">
+                            <page-link page-model="Model.PageViewModel" page-action="Index"></page-link>
+                        </div>
+                        <div class="con">
+                            @if (Model.PageViewModel.HasNextPage) 
+                            {
+                            <a asp-action="Index" asp-route-page="@(Model.PageViewModel.PageNumber + 1)" class="btn btn-outline-dark">
+                                    Вперед
+                                    <i class="glyphicon glyphicon-chevron-right"></i>
+                                </a> 
+                            }
+                        </div>
+                     
+                        @if(User.Identity.IsAuthenticated) {
+
+                        
+                        <div >
+                            @Html.ActionLink("AddLongread", "AddLongread", null, null, new { @class="addPost btn btn-primary", style=" margin-right: 10px; float: right"})
+                        </div>
+                    }
+                    <div id="modDialog" class="modal fade">
+                        <div id="dialogContent" style=" max-width: 1000px" class="modal-dialog"></div>
+                    </div>
+                </div>
+            </div>
+             <div class="rightcolumn">
+                <div class="card" >
+                    <h2>Новости мира Открытых Колёс</h2>
+                    
+                    <div id="divRss"></div>
+                </div>
+                <div class="card" style="padding: 5px;">
+                    <h3 style="text-align: center;">Интересное</h3>
+                     
+                    <div id="popularPartial">
+
+                    </div>
+
+                </div>
+                <div class="card" style="padding: 5px;">
+                    <h3 style="text-align: center;">Новые комментарии</h3>
+                     
+                    <div id="newCommentsPartial">
+
+                    </div>
+
+                </div>
+                @* <div class="card" style="text-align: center;">
+                    <h3>Мы в соцсетях</h3>
+                    <div style=" margin: 0 auto; display: flex; flex-direction: row; text-align: center; font-family: fontawesome !important;">
+                        <div class="social vk">
+                            <a href="#" target="_blank"><i class="fa fa-vk fa-2x"></i></a>
+                        </div>
+                        <div class="social instagram">
+                            <a href="#" target="_blank"><i class="fa fa-instagram fa-2x"></i></a>
+                        </div>
+                        <div class="social instagram">
+                            <a href="#" target="_blank"><i class="fa fa-twitter fa-2x"></i></a>
+                        </div>
+                        <div class="social youtube">
+                            <a href="#" target="_blank"><i class="fa fa-youtube fa-2x"></i></a>
+                        </div>
+                    </div>
+                </div> *@
+            </div>
+
+        </div>
+      
+        <div class="overlay" style="display: none;"  ></div>
+        <div id="modalWindow" style="display: none;" class="modal-window">
+            <div style="width: 15px; height: 15px" class="modal-window-close" onclick="$('.overlay').css('display', 'none');this.parentNode.style.display='none';">
+                <img width="20" height="20" src="/img/close.png">
+            </div>
+            <div class="modal-window-title">
+                <a id="linkToF1" href="#" target="_blank">
+                    Ссылка на F1 News
+                </a>    
+            </div>
+            <div class="modal-window-content">
+                <iframe  id="iframe-window" src="about:blank" frameborder="0"></iframe>
+            </div> 
+        </div>
+    </div>
+</body>
+
+<script>
+     
+        $('#divRss').FeedEk({
+            FeedUrl : 'f1news.ru/export/news.xml',
+            MaxCount : 5,
+            ShowDesc : true,
+            ShowPubDate:true,
+            DescCharacterLimit:100,
+            TitleLinkTarget:'_blank',
+            DateFormat : 'dd/MM/yyyy',
+            DateFormatLang : 'ru'
+        });
+     
+</script>
+<script>
+    $(function() {
+        $.ajaxSetup({
+            cache: false
+        });
+        $(".addPost").click(function(e) {
+
+            e.preventDefault();
+            $.get(this.href, function(data) {
+                $('#dialogContent').html(data);
+                $('#modDialog').modal('show');
+            });
+        });
+    })
+</script>
+<script>
+    $(document).ready(function() {
+        $('.embeddedVideo').each(function() {
+            var video = $(this).attr('src'); // get the current value of the input field.
+            if (video.includes('.be/')) {
+                var res = video.split("/").pop();
+            } else {
+                var res = video.split("=").pop();
+            }
+
+            var embeddedUrl = "https://www.youtube.com/embed/" + res + '?autoplay=0&controls=0&enablejsapi=1&mute=0&loop=1&&playlist=Video_ID';
+
+
+            $(this).attr('src', embeddedUrl);
+            $(this).css('display', 'block');
+
+        });
+
+        $.get('/Home/_GetBestPosts', function(data) {
+            $('#popularPartial').html(data);
+        });
+        $.get('/Home/_GetNewComments', function(data) {
+            $('#newCommentsPartial').html(data);
+        });
+
+
+    });
+    var player;
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('ytplayer', {
+            events: {
+                'onReady': onPlayerReady
+            }
+        });
+    }
+</script>
+<script>
+      
+    let elem = $('.iframe-link');
+    elem.on('click', function(e){
+        e.preventDefault();
+        alert(elem.attr('href'));
+        $('#modalWindow').addClass("visible"); 
+        $('#iframe-window').attr('src', $(this).attr('href'));
+         
+        $('#linkToF1').attr('href', $(this).attr('href'))
+         
+        
+    });
+    function showModal(self) {
+        var modal = document.getElementById('modalWindow');
+        modal.style.display = 'block';
+        var iframe = modal.getElementsByTagName('iframe')[0];
+        $('#iframe-window').attr('src', elem.attr('href'));
+        $('#modalWindow').css('display', 'block');
+        
+        $('.modal-window').css('display', 'block');
+        return false;
+    }
+    $(document).mouseup(function (e) {
+        var container = $("#modalWindow");
+        if (container.has(e.target).length === 0){
+            container.hide();
+            $('.overlay').hide();
+        }
+    });
+     
+</script>
+<script type="text/javascript">
+    function setFocus()
+    {
+        document.getElementById("main").focus();
+    }
+</script>

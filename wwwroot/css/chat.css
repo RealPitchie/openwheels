@@ -1,0 +1,132 @@
+.chat {
+    overflow-x: hidden;
+    height: 70vh;
+    width: 50%;
+    margin: 10px auto;
+    background-color: white;
+    overflow-y: auto;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    border-radius: 5px;
+}
+
+#chatroom {
+    margin: 10px;
+}
+
+.chat-message-input {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.chat-message {
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 80%;
+    border-radius: 5px;
+    margin-left: 20px;
+    margin-bottom: 5px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.notify {
+    background-color: white;
+}
+
+#inputForm {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin: auto;
+    margin-left: 5px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+#imageAttach {
+    width: 38px;
+    height: 38px;
+    background-color: transparent;
+    font-size: 0px;
+    float: right;
+    border: none;
+    cursor: pointer;
+    background-image: url(/img/skrepka.jpg);
+    background-size: contain;
+}
+
+#imageTo64 {
+    width: 38px;
+    height: 36px;
+    margin: auto;
+    margin-left: 5px;
+    background-image: url(/img/skrepka.jpg);
+    background-size: contain;
+    font-size: 0px;
+    float: right;
+    border: none;
+}
+
+#sendBtn {
+    margin-left: 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+#message {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+#chatroom p {
+    background-color: rgba(57, 24, 175, 0.555);
+    padding: 5px;
+    text-indent: 10px;
+    border-radius: 5px;
+}
+
+ ::-webkit-scrollbar {
+    width: 12px;
+}
+
+ ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+ ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .chat {
+        width: 90%;
+    }
+    .chat-message-input {
+        width: 90%;
+    }
+    #sendBtn {
+        width: 38px;
+        height: 36px;
+        margin: auto;
+        background-image: url(/img/sendmessage.jpg);
+        background-size: contain;
+        font-size: 0px;
+        float: right;
+        border: none;
+    }
+    #message {
+        width: 80%;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}

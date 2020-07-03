@@ -1,0 +1,70 @@
+@model IEnumerable<Comment>
+    <link rel="stylesheet" href="/css/comments.css">
+<form asp-action="PostComment" method="post">
+     
+        
+        <div class="comments-list">
+            @foreach (var comment in Model)
+            {
+               <div class="comment">
+                   <div class="comment-author" style="display: inline; margin-top: 5px;">
+                        @if(comment.AuthorAvatar != null)
+                        {
+                            <img src="@comment.AuthorAvatar" class="userAvatarComment">
+                        } else
+                        {  <img src="/Files/Images/Avatars/default_avatar.jpg" class="userAvatarComment">} 
+                        @comment.Author 
+                            <span style="float: right; text-align: right; margin-right: 25px; font-size: smaller;">@comment.Posted.ToShortTimeString()
+                                <br>@comment.Posted.Date.ToShortDateString()</span>
+                    </div>  
+                    <hr>
+                   @if(comment.ImageFile != null)
+                   {
+                        <div class="comment-image" style="background-color:  rgba(145, 145, 145, 0.1);;">
+                            <img tabindex="0" src="@comment.ImageFile">
+                        </div> 
+                   } else if (comment.VideoLink != null)
+                   {
+                       <div class="myvideo">
+                            <iframe class="embeddedVideo" style="display: none; " 
+                                src="@comment.VideoLink" frameborder="0" allowfullscreen>
+                            </iframe>
+                        </div> 
+                   }
+                    
+                   <div class="comment-text">
+                       @if(comment.Text != null && comment.Text.Length >0)
+                       {
+                           @foreach (var str in comment.Text.Split('\n'))
+                            {
+                                <p>@str</p>
+                            }
+                       }
+                   </div>
+               </div>
+            }
+        </div>
+    <script>
+        $(document).ready(function() {
+            $('.embeddedVideo').each(function() {
+                var video = $(this).attr('src'); // get the current value of the input field.
+                if (video.includes('.be/')) {
+                    var res = video.split("/").pop();
+                } else {
+                    var res = video.split("=").pop();
+                }
+
+                var embeddedUrl = "https://www.youtube.com/embed/" + res + '?autoplay=0&controls=1&enablejsapi=1&mute=0&loop=1&&playlist=Video_ID';
+
+
+                $(this).attr('src', embeddedUrl);
+                $(this).css('display', 'block');
+
+            });
+ 
+
+
+        });
+    </script>
+</form>
+ 

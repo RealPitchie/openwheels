@@ -1,0 +1,274 @@
+@{
+    ViewData["Title"] = "PostView";
+    Layout = "/Views/Shared/_Layout.cshtml"; 
+}
+@model Longread
+@{
+    var imageLink = "https://openwheels.tk" + @Model.ImageFile;
+    var directLink = "https://openwheels.tk/Home/PostView/" + @Model.Id;
+    int length = Model.Text.Length > Model.ImageFile.Length? Model.Text.Length : Model.ImageFile.Length;
+}
+<head>
+    <title>@Model.Title</title>
+    <meta name="description" content="@Model.Subtitle">
+    <meta property = "og:url" content = "@directLink">
+    <meta property = "og:image" content = "@imageLink">
+</head>
+<style>
+    .myvideo {
+        position:relative;
+        padding: 0 0 56.25% 0;
+        height:0;
+        overflow:hidden;
+    }
+        .myvideo iframe,.myvideo object,.myvideo embed {
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+    }
+    .wrapper {
+        height: 450px;
+        
+      }
+      .exmpl {
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .exmpl img {
+        object-fit: contain;
+         
+        width: auto;
+      }
+    .responsive {
+        width: 40%;
+        height: auto;
+    }
+    .logo_small {
+        width: 50%;
+        height: auto;
+    }
+     
+    .exmp3 img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<div class="container" style="margin-bottom: 20px;">
+    <div class="row">
+        <div class="leftcolumn">
+            <div class="jumbotron" style="padding-bottom: 7rem;margin-top: 10px; background-color: rgba(211,211,211, .2);">
+                <h1 class="display-4">@Model.Title</h1>
+                
+                    @foreach (var subtitle in @Model.Subtitle.Split('\n'))
+                    {
+                        <i style="font-size: larger; font-weight: 300;" class="lead">
+                            <p>@subtitle</p>
+                        </i>    
+                    }
+                
+                
+                @* @if(Model.ImageFile != null)
+                {
+                    <div class="wrapper exmpl" style="margin: 20px 0; background-image: url(@Model.ImageFile); background-size: cover;">
+                        
+                    </div>
+                } *@
+                 
+                @if(Model.VideoLink != null)
+                {
+                    <div class="myvideo">
+                        <iframe class="embeddedVideo" style="display: none; " 
+                            src="@Model.VideoLink" frameborder="0" allowfullscreen>
+                        </iframe>
+                    </div>    
+                    
+                }
+                <hr class="my-4">
+                @if(Model.Text != null)
+                {
+                    @for (int i = 0; i < length; i++)
+                    {
+                        foreach (var subString in Model.Text )
+                        {   
+                            foreach(var sub in subString.Split('\n'))
+                            {
+                                <p>@sub</p>
+                            }
+                        }
+                        if (Model.ImageFile[i] != null)
+                        {
+                           <div class="exmp3"><img src="@Model.ImageFile[i]"></div> 
+                        }
+                        <br>
+                    }
+                     
+ 
+                }
+                 
+                <div style="float: right; margin-top: 0">
+                    @if(Model.AuthorAvatar != null)
+                     {
+                          <img src="@Model.AuthorAvatar" class="userAvatar">
+                     } else
+                     { <img src="/Files/Images/Avatars/default_avatar.jpg" class="userAvatar">} 
+                     <br> 
+                     <p style="text-align: center;">@Model.Author</p>
+                </div>
+            </div>
+            <div style="margin: 15px;">
+                <a onclick="javascript:history.back(); return false;" class="btn btn-outline-success">Назад</a>
+            </div>
+            <div id="comments-partial">
+
+            </div>
+            @if(User.Identity.IsAuthenticated){
+                <div style="margin-top: 20px; margin-left: 15px" >
+                    <a asp-action="AddComment" asp-route-id="@Model.Id" class="addComment btn btn-primary">
+                        Комментировать
+                    </a>
+                </div>
+            }else
+            {
+                <div style="margin-top: 20px; margin-left: 15px" >
+                    <a asp-action="Login" asp-controller="Account">
+                        <b>Войдите</b>
+                    </a>
+                    или
+                    <a asp-action="Register" asp-controller="Account">
+                        <b>зарегистрируйтесь</b>
+                    </a>
+                    , чтобы оставлять комментарии
+                </div>
+            }
+            <br>
+            <div style="margin: 15px ;">
+                Поделиться<br>            
+                
+                <div class="ya-share2" data-services="vkontakte,facebook,whatsapp,telegram" data-limit="3"></div>
+
+            </div>
+            <div id="modDialog" class="modal fade">
+                <div id="dialogContent" class="modal-dialog"></div>
+            </div>
+            
+             
+        </div>
+        <div class="rightcolumn">
+                <div class="card">
+                    <h2>Новости мира Открытых Колёс</h2>
+                    
+                    <div id="divRss"></div>
+                </div>
+                <div class="card" style="padding: 5px;">
+                    <h3 style="text-align: center;">Интересное</h3>
+                     
+                    <div id="popularPartial">
+
+                    </div>
+
+                </div>
+                <div class="card" style="padding: 5px;">
+                    <h3 style="text-align: center;">Новые комментарии</h3>
+                     
+                    <div id="newCommentsPartial">
+
+                    </div>
+
+                </div>
+                @* <div class="card" style="text-align: center;">
+                    <h3>Мы в соцсетях</h3>
+                    <div style=" margin: 0 auto; display: flex; flex-direction: row; text-align: center; font-family: fontawesome !important;">
+                        <div class="social vk">
+                            <a href="#" target="_blank"><i class="fa fa-vk fa-2x"></i></a>
+                        </div>
+                        <div class="social instagram">
+                            <a href="#" target="_blank"><i class="fa fa-instagram fa-2x"></i></a>
+                        </div>
+                        <div class="social instagram">
+                            <a href="#" target="_blank"><i class="fa fa-twitter fa-2x"></i></a>
+                        </div>
+                        <div class="social youtube">
+                            <a href="#" target="_blank"><i class="fa fa-youtube fa-2x"></i></a>
+                        </div>
+                    </div>
+                </div> *@
+            </div>
+    </div>
+    <div class="overlay" style="display: none;"  ></div>
+        <div id="modalWindow" style="display: none;" class="modal-window">
+            <div style="width: 15px; height: 15px" class="modal-window-close" onclick="$('.overlay').css('display', 'none');this.parentNode.style.display='none';">
+                <img width="20" height="20" src="/img/close.png">
+            </div>
+            <div class="modal-window-title">
+                <a id="linkToF1" href="#" target="_blank">
+                    Ссылка на F1 News
+                </a>    
+            </div>
+            <div class="modal-window-content">
+                <iframe  id="iframe-window" src="about:blank" frameborder="0"></iframe>
+            </div> 
+        </div>
+</div>
+<script type="text/javascript" src="/js/FeedEk.js"></script>
+<script>
+    $(document).ready(function(){
+        $.get('/Home/_GetComments/' + '@Model.Id', function (data) {
+            $('#comments-partial').html(data);
+             
+        });
+        
+    })
+    $.get('/Home/_GetBestPosts', function(data) {
+            $('#popularPartial').html(data);
+        });
+</script>
+<script>
+    $(function() {
+        $.ajaxSetup({
+            cache: false
+        });
+        $(".addComment").click(function(e) {
+
+            e.preventDefault();
+            $.get(this.href, function(data) {
+                $('#dialogContent').html(data);
+                $('#modDialog').modal('show');
+            });
+        });
+    })
+     
+</script>
+<script>
+     $(document).ready(function() {
+        $('.embeddedVideo').each(function() {
+            var video = $(this).attr('src'); // get the current value of the input field.
+            if (video.includes('.be/')) {
+                var res = video.split("/").pop();
+            } else {
+                var res = video.split("=").pop();
+            }
+
+            var embeddedUrl = "https://www.youtube.com/embed/" + res + '?autoplay=0&controls=1&enablejsapi=1&mute=0&loop=1&&playlist=Video_ID';
+
+
+            $(this).attr('src', embeddedUrl);
+            $(this).css('display', 'block');
+
+        });
+
+        $.get('/Home/_GetBestPosts', function(data) {
+            $('#popularPartial').html(data);
+        });
+        $.get('/Home/_GetNewComments', function(data) {
+            $('#newCommentsPartial').html(data);
+        });
+
+
+    });
+</script>

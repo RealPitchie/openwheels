@@ -1,0 +1,66 @@
+ .comment {
+     border-radius: 10px;
+     border: black 0 solid;
+     background-color: rgba(145, 145, 145, 0.1);
+     margin: 15px 0;
+     padding: 15px;
+ }
+ 
+ .comment:hover {
+     box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+     transition: all 0.1s ease-in;
+ }
+ 
+ .comment-author {
+     color: slateblue;
+     font-size: larger;
+     margin: 10px;
+ }
+ 
+ .comment-image {
+     margin: 10px;
+     width: 100px;
+     height: auto;
+ }
+ 
+ .comment-text {
+     margin: 10px;
+ }
+ /*image preview*/
+ 
+ .comment-image img[tabindex="0"] {
+     cursor: zoom-in;
+     width: 100%;
+ }
+ 
+ .comment-image img[tabindex="0"]:focus {
+     position: fixed;
+     z-index: 10;
+     top: 0;
+     left: 0;
+     bottom: 0;
+     right: 0;
+     width: auto;
+     height: auto;
+     max-width: 99%;
+     max-height: 99%;
+     margin: auto;
+     background-color: rgba(145, 145, 145, 0.1);
+     box-shadow: 0 0 20px #000, 0 0 0 1000px rgba(210, 210, 210, .4);
+ }
+ 
+ .comment-image img[tabindex="0"]:focus,
+ /* убрать строку, если не нужно, чтобы при клике на увеличенное фото, оно возвращалось в исходное состояние */
+ 
+ .comment-image img[tabindex="0"]:focus~* {
+     pointer-events: none;
+     cursor: zoom-out;
+ }
+ 
+ @media(max-width: 768px) {
+     .comment-author {
+         color: slateblue;
+         font-size: smaller;
+         margin: 10px;
+     }
+ }

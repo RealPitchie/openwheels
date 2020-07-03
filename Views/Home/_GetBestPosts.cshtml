@@ -1,0 +1,93 @@
+@model IEnumerable<Post>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+   
+<style>
+    .two { height:38px; float: left; }
+    .two:last-child { float: right; }
+    .one:after {
+        display: block;
+        width: 100%;
+        content: '';
+        clear: both;
+    }
+    .previewLink{
+        
+         
+         
+        cursor: pointer;
+        margin: 0 auto;
+         
+        height: 60px;
+        width: 100%;
+        border-radius: 7px;
+    }
+    .previewLink:hover{
+        box-shadow: 0 0 11px rgba(33, 33, 33, .5);
+    }
+    .previewLink h4{
+        vertical-align:middle;
+        margin-top:15px;
+        margin-left: 15px;
+        color: darkblue;
+        vertical-align:middle;
+        top:15px;
+    }
+    .previewLink a{
+        text-decoration: none;
+        color: darkblue;
+        vertical-align:middle;
+        top:15px;
+    }
+    .two span{
+         position: absolute;
+         right: 20px;
+         width: 40px;
+         opacity: .4;
+    }
+     
+</style>
+<hr>
+@foreach (var post in Model)
+{
+    <div>
+        @if(post.Title.Length > 20)
+        {
+            <div  title="@post.Title"  class="previewLink">
+                <div class="one " onclick="location.href='/Home/PostView/@post.Id'" name="@post.Id">
+                <div class="two">
+                    <p title="@post.Title" style="margin-left: 5px; margin-top: 15px; font-size: medium; font-weight: 600;">
+                        @post.Title.Substring(0, 20)... 
+                    </p>
+                </div>
+                <div class="two"  >
+                    <span style="font-size: small; margin-top: 20px; text-align: right">
+                        <i class="fa fa-eye" title="Раз просмотрено"></i> @post.Rating
+                    </span>
+                </div>
+                
+            </div>
+            </div>
+
+        }else
+        {
+             <div  title="@post.Title"  class="previewLink">
+                <div class="one " onclick="location.href='/Home/PostView/@post.Id'" name="@post.Id">
+                <div class="two">
+                    <p title="@post.Title" style="margin-left: 5px; margin-top: 15px; font-size: medium; font-weight: 600;">
+                        @post.Title 
+                    </p>
+                </div>
+                <div class="two"  >
+                    <span style="font-size: small; margin-top: 20px; text-align: right">
+                        <i class="fa fa-eye" title="Раз просмотрено"></i> @post.Rating
+                    </span>
+                </div>
+                
+            </div>
+            </div>
+        }
+            
+            
+    </div> 
+     
+}

@@ -1,0 +1,165 @@
+﻿<!doctype html>
+
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta property="og:site_name" content="Openwheels.tk"/>
+         
+         
+		@if(Model is Post)
+        {
+            var imageLink = "https://openwheels.tk" + @Model.ImageFile;
+            var directLink = "https://openwheels.tk/Home/PostView/" + @Model.Id;
+            <meta property = "og:url" content = "@directLink">
+            <meta property = "og:image" content = "@imageLink">
+        }else
+        {
+            
+        }
+        
+        <meta property="og:image:width" content="640" /> 
+        <meta property="og:image:height" content="442" />
+		 
+		
+		<meta name="keywords" content="формула1, формула, гонки, ЯП, яплакал">
+		<meta name="author" content="Pitchie">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js" integrity="sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=" crossorigin="anonymous"></script> 
+        <link href="/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src="/js/fileinput.min.js"></script>
+         <script type="text/javascript" src="/js/FeedEk.js"></script>
+         <script src="/js/bootstrap-switch.js"></script>
+        <!------ Include the above in your HEAD tag ---------->
+         
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/social.css">
+        <link rel="stylesheet" href="/css/FeedEk.css">
+         
+        <link href="/css/bootstrap-switch.css" rel="stylesheet">
+	</head>
+	<body>
+        <div class="content">
+             
+            <nav class="navbar navbar-expand-lg navbar-dark mx-background-top-linear">
+                <div class="container">
+                <a class="navbar-brand" rel="nofollow" href="/Home/Index" style="text-transform: uppercase;"> F1 Flooder</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+
+                    <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Home/Index">ГЛАВНАЯ
+                        <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Home/Index">Новости</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Форум</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Chat">Чятик</a>
+                    </li>
+                    @if(User.Identity.IsAuthenticated)
+                    {
+                        <span style="color: beige; margin-top: 12px;font-size: smaller;">@User.FindFirst("Name").Value</span>
+                        <li>
+                            
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <span style="margin-top: 12px; font-size: smaller;">
+                                        <input style="margin-top: 5px; margin-left: 10px;" class="logout-btn btn btn-outline-dark btn-sm" type="submit" value="Выход" />
+                                    </span>
+                                </form>
+                        </li>
+                    }else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/Register">Регистрация</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/Login">Вход</a>
+                        </li>
+                    }
+                    </ul>
+                </div>
+                </div>
+            </nav>
+            <main role="main">
+                
+                
+                @RenderBody()
+                
+            </main>
+        
+        </div>
+		<footer role="contentinfo" class="footer">
+            
+			<div class="container">
+				<span style="color: beige;">© F1 говорильня - 2020 - </span>
+			</div>
+		</footer>
+	</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.min.js" integrity="sha256-LeAW7V38b1z8nHHlrckbnAfx5W4Ge57nDlsDz6GzJjc=" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="/js/FeedEk.js"></script>
+    <script>
+        $('#divRss').FeedEk({
+            FeedUrl : 'f1news.ru/export/news.xml',
+            MaxCount : 5,
+            ShowDesc : true,
+            ShowPubDate:true,
+            DescCharacterLimit:100,
+            TitleLinkTarget:'_blank',
+            DateFormat : 'dd/MM/yyyy',
+            DateFormatLang : 'ru'
+        });
+    </script>
+    <script>
+        
+        let elem = $('.iframe-link');
+        elem.on('click', function(e){
+            e.preventDefault();
+            alert(elem.attr('href'));
+            $('#modalWindow').addClass("visible"); 
+            $('#iframe-window').attr('src', $(this).attr('href'));
+            
+            $('#linkToF1').attr('href', $(this).attr('href'))
+            
+            
+        });
+        function showModal(self) {
+            var modal = document.getElementById('modalWindow');
+            modal.style.display = 'block';
+            var iframe = modal.getElementsByTagName('iframe')[0];
+            $('#iframe-window').attr('src', elem.attr('href'));
+            $('#modalWindow').css('display', 'block');
+            
+            $('.modal-window').css('display', 'block');
+            return false;
+        }
+        $(document).mouseup(function (e) {
+            var container = $("#modalWindow");
+            if (container.has(e.target).length === 0){
+                container.hide();
+                $('.overlay').hide();
+            }
+        });
+        
+    </script>
+    <script src="https://yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
+    <script src="https://yastatic.net/share2/share.js"></script>
+    @RenderSection("Scripts", required: false)
+</html>

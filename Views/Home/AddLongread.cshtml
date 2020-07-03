@@ -1,0 +1,158 @@
+@model Longread
+<link href="~/css/bootstrap.min.css" rel="stylesheet">
+ 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<form asp-action="AddLongread" enctype="multipart/form-data">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Новая запись</h4>
+            <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+            
+        </div>
+        <div class="modal-body">
+            <dl class="dl-horizontal">
+                <input type="hidden" asp-for="@Model.Id">
+                <dt>Придумаем заголовок</dt>
+                <dd>
+                    <input asp-for="@Model.Title" class="form-control">
+                </dd>
+    
+                <dt>И подзаголовок</dt>
+                <dd>
+                    <textarea asp-for="@Model.Subtitle" class="form-control" rows="2"></textarea>
+                </dd>
+                <dt>Добавим фото...</dt>
+                <dd>
+                     <div class="example-2">
+                        <div class="form-group">
+                            <input  type="file" accept=".png, .jpg, .jpeg, .bmp" id="imagefile0"
+                                 class="form-control" onchange="loadFile(event)" name="imageFile">
+                            <label for="file" class="btn btn-tertiary js-labelFile">
+                             
+                            </label>
+                        </div>
+                    </div>
+                    
+                     <div class="exmp3" >
+                        <img style="display: none; object-fit: cover; " id="output0"/>
+                    </div>
+                </dd>
+                <dt>... или ссылку на видео YouTube</dt>
+                <dd>
+                    <input id="videolink" name="videolink" class="form-control">
+                </dd>
+                <div id="divVideo">
+                    <iframe id="videoframe" style="display: none; width: 100%; height: 350px" frameborder="0" allowfullscreen>
+                    </iframe>
+                    
+                </div>
+                <dt>Напишем текст</dt>
+                <div id="blocks">
+                    <dd>
+                        <textarea data-order="0" style="resize: none;" name="text" class="form-control" rows="5">
+                            
+                        </textarea>
+                    </dd>
+                </div>
+                <a class="addLink btn btn-default" onclick="addText();">+ текст</a>
+                <a class="addPhoto btn btn-default" onclick="addImage();">+ фото</a>
+                @* <a class="addLink btn btn-default" onclick="addVideo();">+ видео</a> *@
+    
+                 
+    
+                 
+            </dl>
+        </div>
+        <input type="submit" value="И запостим" class="btn btn-outline-primary">
+
+
+    </div>
+</form>
+
+
+@*Scripts*@
+
+<script>
+    let i = 0;
+    var loadFile = function(event) {
+        
+        var output = document.getElementById('output'+i);
+        output.src = URL.createObjectURL(event.target.files[0]);
+        $('#output' + i).css("height", "200px");
+        $('#output' + i).css("width", "auto");
+        $('#output' + i).css("display", "block");
+        $('#imagefile'+i).css('display', 'none'); 
+        i++;
+    };
+</script>
+<script>
+    $('#videolink').on('input', function() { 
+        var video = $(this).val(); // get the current value of the input field.
+
+        if(video.includes('.be/')){
+            var res = video.split("/").pop();
+        }else{
+            var res = video.split("=");
+        }
+        
+        var embeddedUrl = "https://www.youtube.com/embed/"+res + '?controls=1&loop=1&&playlist=Video_ID';
+        
+        $('#videoframe').css('display', 'block');
+        $('#divVideo #videoframe').attr('src', embeddedUrl);
+        $("#divVideo video")[0].load()
+    });
+     
+</script>
+<script>
+    (function() {
+    
+        'use strict';
+        let i = 0;
+        $(function() {
+            var $input = $('#imagefile'+i),
+                $label = $input.next('.js-labelFile'),
+                labelVal = $label.html();
+            
+        $input.on('change', function(element) {
+            var fileName = '';
+            if (element.target.value) fileName = element.target.value.split('\\').pop();
+            fileName ? $label.addClass('has-file').find('.js-fileName').html(fileName) : $label.removeClass('has-file').html(labelVal);
+                        
+        });
+        i++;
+    });
+    
+    
+    })(); 
+</script>
+<script>
+    $(function addText() {
+        let i = 0;
+        $('.addLink').click(function()
+        {
+            i++;
+            var html2Add=    "<dd>"+
+                                "<textarea name='text' style='margin-top: 10px; resize: none;' class='form-control' rows='5'>"+
+                                "</textarea>" +
+                            "</dd>";
+            $('#blocks').append(html2Add);
+            $('#blocks').animate({scrollTop: $(document).height() + $('#blocks').height()});
+        })
+    });
+     $(function addImage() {
+        let i = 0;
+        $('.addPhoto').click(function()
+        {
+            i++;
+            var html2Add=    '<input name="imageFile" type="file" accept=".png, .jpg, .jpeg, .bmp" id="imagefile'+ i + '"' + 
+                               ' class="form-control" onchange="loadFile(event)" id="file" >'+
+                           ' <label for="file" class="btn btn-tertiary js-labelFile">'+
+                            '</label> <div class="exmp3" >' +
+                                '<img style="display: none; object-fit: cover; " id="output' + i +'"/>' +
+                           ' </div>';
+            $('#blocks').append(html2Add);
+            $('#blocks').animate({scrollTop: $(document).height() + $('#blocks').height()});
+        })
+    })
+    
+</script>

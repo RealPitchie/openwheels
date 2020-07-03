@@ -1,0 +1,110 @@
+@model Comment
+@{
+    var id = ViewBag.Id;
+}
+<link href="~/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="~/css/input_button.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<form asp-action="AddComment" enctype="multipart/form-data">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Новый комментарий</h4>
+            <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+            
+        </div>
+        <div class="modal-body">
+            <dl class="dl-horizontal">
+                @* <input type="hidden" asp-for="@Model.Id"> *@
+                <input type="hidden" asp-for="@Model.PostId" value="@id">
+                 
+                <dt>Напишем текст</dt>
+                <dd>
+                    <textarea asp-for="@Model.Text" class="form-control" rows="5">
+
+                    </textarea>
+                </dd>
+    
+                <dt>Добавим фото</dt>
+                <dd>
+                     <div class="example-2">
+                        <div class="form-group">
+                            <input class="input-file" type="file"  
+                                asp-for="@Model.ImageFile" class="form-control" 
+                                onchange="loadFile(event)" capture="camera" id="file" name="imageFile">
+                            <label for="file" class="btn btn-tertiary js-labelFile">
+                            <i class="icon fa fa-check"></i>
+                            <span class="js-fileName">Загрузить файл</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                     <div class="exmp3" style="text-align: -webkit-center; ">
+                        <img style="display: none; object-fit: cover; " id="output"/>
+                    </div>
+                </dd>
+    
+                <dt>... или видео</dt>
+                <dd>
+                    <input id="videolink" asp-for="@Model.VideoLink" class="form-control">
+                </dd>
+                <div id="divVideo">
+                    <iframe id="videoframe" style="display: none; width: 100%; height: 350px" frameborder="0" allowfullscreen>
+                    </iframe>
+                    
+                </div>
+                 
+            </dl>
+        </div>
+        <input type="submit" value="И запостим" class="btn btn-outline-primary">
+    </div>
+</form>
+
+
+<script>
+  var loadFile = function(event) {
+    var output = document.getElementById('output');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    $('#output').css("height", "200px");
+    $('#output').css("width", "auto");
+    $('#output').css("display", "block");
+  };
+</script>
+<script>
+    $('#videolink').on('input', function() { 
+        var video = $(this).val(); // get the current value of the input field.
+
+        if(video.includes('.be/')){
+            var res = video.split("/").pop();
+        }else{
+            var res = video.split("=");
+        }
+        
+        var embeddedUrl = "https://www.youtube.com/embed/"+res + '?controls=1&loop=1&&playlist=Video_ID';
+        
+        $('#videoframe').css('display', 'block');
+        $('#divVideo #videoframe').attr('src', embeddedUrl);
+        $("#divVideo video")[0].load()
+    });
+     
+</script>
+<script>
+    (function() {
+    
+    'use strict';
+    
+    $('.input-file').each(function() {
+        var $input = $(this),
+            $label = $input.next('.js-labelFile'),
+            labelVal = $label.html();
+        
+    $input.on('change', function(element) {
+        var fileName = '';
+        if (element.target.value) fileName = element.target.value.split('\\').pop();
+        fileName ? $label.addClass('has-file').find('.js-fileName').html(fileName) : $label.removeClass('has-file').html(labelVal);
+        $('.exmp3').css("height", "200px");
+    });
+    });
+    
+    
+    })(); 
+</script>

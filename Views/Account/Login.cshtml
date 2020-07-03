@@ -1,0 +1,63 @@
+@model yapf1.Models.ViewModels.LoginViewModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .flex_container{
+
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+ 
+    }
+    #con1{
+        width: 50%;
+        
+         
+    }
+
+    #con2{
+        width: 10%;
+         
+    }
+    
+</style>
+  <link href="~/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+<body>
+    <div class="form">
+        <div class="block">
+            <h2>Вход в приложение</h2>
+            <form method="post" asp-controller="Account" asp-action="Login"
+                asp-route-returnUrl="@Model.ReturnUrl">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly"></div>
+                <div>
+                    <label asp-for="Email"></label><br />
+                    <input class="form-control"  asp-for="Email" />
+                    <span asp-validation-for="Email"></span>
+                </div>
+                <div>
+                    <label asp-for="Password"></label><br />
+                    <input class="form-control"  asp-for="Password" />
+                    <span asp-validation-for="Password"></span>
+                </div>
+                <div class="flex_container">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"  asp-for="RememberMe"> Запомнить
+                        </label>
+                    </div>
+                     
+                     
+                </div>
+                 
+                <div>
+                    <input class="btn btn-outline-primary"  type="submit" value="Войти" />
+                </div>
+            </form>
+        </div>  
+    </div>
+</body>
+

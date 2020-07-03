@@ -1,0 +1,80 @@
+@model IEnumerable<Comment>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+   
+<style>
+    .one{
+        margin-left: 10px;
+    }
+    .one:after {
+        display: block;
+        width: 100%;
+        content: '';
+        clear: both;
+    }
+    .previewLink{
+        
+         
+         
+        cursor: pointer;
+        margin: 0 auto;
+         
+        height: 60px;
+        width: 100%;
+        border-radius: 7px;
+    }
+    .previewLink:hover{
+        box-shadow: 0 0 11px rgba(33, 33, 33, .5);
+    }
+    .previewLink h4{
+         
+        margin-top:15px;
+        margin-left: 15px;
+        color: darkblue;
+         
+        top:15px;
+    }
+    .previewLink a{
+        text-decoration: none;
+        color: darkblue;
+         
+        top:15px;
+    }
+    .two span{
+         position: absolute;
+         right: 20px;
+         width: 40px;
+         opacity: .4;
+    }
+     
+</style>
+<hr>
+@foreach (var post in Model)
+{
+    List<Longread> Posts = ViewBag.PostsAffected;
+    var target = Posts.Where(p => p.Id == post.LongreadId).Select(p => p).FirstOrDefault();
+    <div>
+         
+            <div  title="@post.Text"  class="previewLink">
+                <div class="one " onclick="location.href='/Home/PostView/@target.Id#comments-partial'" name="@post.Id">
+                <div>
+                    <span title="@post.Text" style=" margin-top: 15px; font-size: medium; font-weight: 600;">
+                        @post.Text.Substring(0, 25)... 
+                    </span>
+                    <p>
+                        к посту 
+                        <a href="/Home/PostView/@target.Id#comments-partial" style="vertical-align: top;" title="@target.Title">
+                            @target.Title.Substring(0, 17)...
+                        </a>
+                    </p>
+                </div>
+                 
+                
+            </div>
+            </div>
+
+         
+            
+            
+    </div> 
+     
+}
