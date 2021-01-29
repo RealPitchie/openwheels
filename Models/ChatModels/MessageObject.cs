@@ -1,4 +1,4 @@
-namespace yapf1.Models.ChatModels
+namespace openwheels.Models.ChatModels
 {
     public class MessageObject
     {

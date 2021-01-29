@@ -11,10 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using yapf1.Models;
-using yapf1.Models.ChatModels;
+using openwheels.Models;
+using openwheels.Models.ChatModels;
 
-namespace yapf1
+namespace openwheels
 {
     public class Startup
     {
@@ -31,15 +31,13 @@ namespace yapf1
             services.AddSignalR();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | 
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                     ForwardedHeaders.XForwardedProto;
-                 
             });
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<BlogContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
- 
             services.AddIdentity<AppUser, IdentityRole>(opts=> {
                 opts.Password.RequiredLength = 6;   // минимальная длина
                 opts.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
@@ -48,7 +46,6 @@ namespace yapf1
                 opts.Password.RequireDigit = true; // требуются ли цифры
             })
                 .AddErrorDescriber<CustomIdentityErrorDescriber>()
-                 
                 .AddEntityFrameworkStores<ApplicationContext>();
             services.AddControllersWithViews();
             services.AddRazorPages()
@@ -68,27 +65,19 @@ namespace yapf1
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            
-
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-        
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<ChatHub>("/chatter");
-            });
+            app.UseEndpoints(endpoints => endpoints.MapHub<ChatHub>("/chatter"));
         }
     }
 }

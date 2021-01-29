@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using yapf1.Models.ViewModels;
+using openwheels.Models.ViewModels;
 
-namespace yapf1.Models.TagHelpers
+namespace openwheels.Models.TagHelpers
 {
     public class PageLinkTagHelper : TagHelper
     {
-        private IUrlHelperFactory urlHelperFactory;
+        private readonly IUrlHelperFactory urlHelperFactory;
         public PageLinkTagHelper(IUrlHelperFactory helperFactory)
         {
             urlHelperFactory = helperFactory;
@@ -20,29 +20,23 @@ namespace yapf1.Models.TagHelpers
         public ViewContext ViewContext { get; set; }
         public PageViewModel PageModel { get; set; }
         public string PageAction { get; set; }
- 
         [HtmlAttributeName(DictionaryAttributePrefix = "page-url-")]
         public Dictionary<string, object> PageUrlValues { get; set; } = new Dictionary<string, object>();
- 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             IUrlHelper urlHelper = urlHelperFactory.GetUrlHelper(ViewContext);
             output.TagName = "div";
- 
             // набор ссылок будет представлять список ul
             TagBuilder tag = new TagBuilder("ul");
             tag.AddCssClass("pagination");
- 
             // формируем три ссылки - на текущую, предыдущую и следующую
             TagBuilder currentItem = CreateTag(PageModel.PageNumber, urlHelper);
- 
             // создаем ссылку на предыдущую страницу, если она есть
             if (PageModel.HasPreviousPage)
             {
                 TagBuilder prevItem = CreateTag(PageModel.PageNumber - 1, urlHelper);
                 tag.InnerHtml.AppendHtml(prevItem);
             }
- 
             tag.InnerHtml.AppendHtml(currentItem);
             // создаем ссылку на следующую страницу, если она есть
             if (PageModel.HasNextPage)
@@ -52,8 +46,7 @@ namespace yapf1.Models.TagHelpers
             }
             output.Content.AppendHtml(tag);
         }
- 
-        TagBuilder CreateTag(int pageNumber, IUrlHelper urlHelper)
+        private TagBuilder CreateTag(int pageNumber, IUrlHelper urlHelper)
         {
             TagBuilder item = new TagBuilder("li");
             TagBuilder link = new TagBuilder("a");

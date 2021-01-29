@@ -1,7 +1,6 @@
 using System;
- 
 
-namespace yapf1.Models
+namespace openwheels.Models
 {
     public class Longread
     {
@@ -12,13 +11,8 @@ namespace yapf1.Models
         public string[] Text { get; set; }
         public string[] ImageFile { get; set; } = new string[10];
         public string VideoLink { get; set; }
-         
         public int Rating { get; set; }
-         
         public string Author { get; set; }
-        public string AuthorAvatar { get; set; } 
-        
+        public string AuthorAvatar { get; set; }
     }
-
-     
 }

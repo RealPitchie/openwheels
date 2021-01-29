@@ -10,19 +10,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
-using yapf1.Models;
-using yapf1.Models.ViewModels;
+using openwheels.Models;
+using openwheels.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections;
 
-namespace yapf1.Controllers
+namespace openwheels.Controllers
 {
     public class HomeController : Controller
     {
-        BlogContext _blogContext;
-        ApplicationContext _appContext;
+        private readonly BlogContext _blogContext;
+        private readonly ApplicationContext _appContext;
         private readonly ILogger<HomeController> _logger;
-        IWebHostEnvironment _appEnvironment;
+        private readonly IWebHostEnvironment _appEnvironment;
 
         public HomeController(ILogger<HomeController> logger, BlogContext blogContext, ApplicationContext appContext, IWebHostEnvironment appEnvironment)
         {
@@ -34,24 +34,18 @@ namespace yapf1.Controllers
 
         public async Task<IActionResult> Index(int page=1)
         {
-            int pageSize = 3;   // количество элементов на странице
+            const int PAGESIZE = 3;   // количество элементов на странице
             var source = _blogContext.Longreads.Select(l => l).OrderByDescending(l => l.Posted);
-             
-            var count = await source.CountAsync();
-            var items = await source.Skip((page - 1) * pageSize).Take(pageSize).ToArrayAsync();
-             
-            
-            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            var count = await source.CountAsync().ConfigureAwait(false);
+            var items = await source.Skip((page - 1) * PAGESIZE).Take(PAGESIZE).ToArrayAsync().ConfigureAwait(false);
+            PageViewModel pageViewModel = new PageViewModel(count, page, PAGESIZE);
             Indexv2ViewModel viewModel = new Indexv2ViewModel
             {
                 PageViewModel = pageViewModel,
                 Posts = items
             };
-             
-            
-            return View(viewModel); 
-        }  
-        
+            return View(viewModel);
+        }
         public IActionResult Privacy()
         {
             return View();
@@ -93,8 +87,6 @@ namespace yapf1.Controllers
                     ClaimsPrincipal currentUser = this.User;
                     newPost.AuthorAvatar = currentUser.FindFirst("UserAvatar").Value;
                     newPost.Author = currentUser.FindFirst("Name").Value;
-                     
-                    
                     _blogContext.Posts.Add(newPost);
                     _blogContext.SaveChanges();
                 }
@@ -108,18 +100,15 @@ namespace yapf1.Controllers
                 return NotFound();
             using(_blogContext)
             {
-
                 var targetPost = (from p in _blogContext.Longreads where p.Id == id select p).FirstOrDefault();
                 if(targetPost == null) return NotFound();
                 ViewBag.Comments = _blogContext.Comments.Where(c => c.PostId == id).OrderBy(c => c.Posted).ToList();
                 targetPost.Rating++;
                 _blogContext.SaveChanges();
-                
                 return View(targetPost);
             }
-            
         }
-        public IActionResult _GetComments(string id)
+        public IActionResult GetComments(string id)
         {
             using(_blogContext)
             {
@@ -136,7 +125,7 @@ namespace yapf1.Controllers
         }
         [Authorize]
         [HttpPost]
-        public IActionResult AddComment(Comment NewComment, string postId, IFormFile cameraVideo, IFormFile imageFile)
+        public IActionResult AddComment(Comment NewComment, string postId, IFormFile imageFile)
         {
             if(NewComment != null)
             {
@@ -162,7 +151,6 @@ namespace yapf1.Controllers
                     NewComment.AuthorAvatar = currentUser.FindFirst("UserAvatar").Value;
                     NewComment.Author = currentUser.FindFirst("Name").Value;
                     NewComment.PostId = postId;
-                    
                     _blogContext.Comments.Add(NewComment);
                     _blogContext.SaveChanges();
                 }
@@ -170,13 +158,11 @@ namespace yapf1.Controllers
 
             return Redirect(Request.Headers["Referer"].ToString() + "#comments-partial");
         }
-
-
         public IActionResult Forum()
         {
             return View();
         }
-        public IActionResult _GetBestPosts()
+        public IActionResult GetBestPosts()
         {
             using(_blogContext)
             {
@@ -186,7 +172,7 @@ namespace yapf1.Controllers
             }
         }
 
-        public IActionResult _GetNewComments()
+        public IActionResult GetNewComments()
         {
             using(_blogContext)
             {
@@ -229,33 +215,24 @@ namespace yapf1.Controllers
                         // сохраняем файл в папку Files в каталоге wwwroot
                        if(!System.IO.File.Exists(path))
                        {
-                            
-                            using (var fileStream = new FileStream (_appEnvironment.WebRootPath + path, FileMode.Create)) {
-                                img.CopyTo(fileStream);
-                            }
-                       }else
+                            using var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create); img.CopyTo(fileStream);
+                        }
+                        else
                        {
-                           path = "/Files/Longreads/Images/" + img.FileName + Guid.NewGuid().ToString();
-                            using (var fileStream = new FileStream (_appEnvironment.WebRootPath + path + Guid.NewGuid().ToString(), FileMode.Create)) {
-                                img.CopyTo(fileStream);
-                            }
-                       }
+                            path = "/Files/Longreads/Images/" + img.FileName + Guid.NewGuid().ToString();
+                            using var fileStream = new FileStream(_appEnvironment.WebRootPath + path + Guid.NewGuid().ToString(), FileMode.Create); img.CopyTo(fileStream);
+                        }
                         filenames.Add(path);
                     }
                     lr.ImageFile = filenames.ToArray();
                 }
-                
                 lr.Posted = DateTime.Now;
                 lr.Id = Guid.NewGuid().ToString();
                 ClaimsPrincipal currentUser = this.User;
                 lr.AuthorAvatar = currentUser.FindFirst("UserAvatar").Value;
                 lr.Author = currentUser.FindFirst("Name").Value;
-                
-                 
                 lr.Text = text;
-               
                 lr.VideoLink = videolink;
-                
                 _blogContext.Add(lr);
                 _blogContext.SaveChanges();
             }

@@ -1,6 +1,6 @@
 using System;
 
-namespace yapf1.Models
+namespace openwheels.Models
 {
     public class ErrorViewModel
     {

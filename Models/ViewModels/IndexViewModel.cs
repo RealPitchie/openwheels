@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using yapf1.Models;
+using openwheels.Models;
 
-namespace yapf1.Models.ViewModels
+namespace openwheels.Models.ViewModels
 {
     public class IndexViewModel
     {
         public IEnumerable<Post> Posts { get; set; }
-        
         public PageViewModel PageViewModel { get; set; }
     }
 }

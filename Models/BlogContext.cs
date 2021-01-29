@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace yapf1.Models
+namespace openwheels.Models
 {
     public class BlogContext : DbContext
     {
@@ -13,6 +13,5 @@ namespace yapf1.Models
         public DbSet<Comment> Comments { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<Longread> Longreads { get; set; }
-        
     }
 }

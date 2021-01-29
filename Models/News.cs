@@ -1,6 +1,6 @@
 using System;
 
-namespace yapf1.Models
+namespace openwheels.Models
 {
     public class News
     {
@@ -13,6 +13,5 @@ namespace yapf1.Models
         public string ImageFile { get; set; }
         public string VideoLink { get; set; }
         public string Author { get; set; }
-        
     }
 }

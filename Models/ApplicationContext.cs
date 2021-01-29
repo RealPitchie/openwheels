@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using yapf1.Models;
+using openwheels.Models;
 
-namespace yapf1.Models
+namespace openwheels.Models
 {
     public class ApplicationContext : IdentityDbContext<AppUser>
     {

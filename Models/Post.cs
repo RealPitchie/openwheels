@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace yapf1.Models
+namespace openwheels.Models
 {
     public class Post
     {
@@ -14,6 +14,6 @@ namespace yapf1.Models
         public string ImageFile { get; set; }
         public string VideoLink { get; set; }
         public string Author { get; set; }
-        public string AuthorAvatar { get; set; } 
+        public string AuthorAvatar { get; set; }
     }
 }
